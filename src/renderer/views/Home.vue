@@ -23,6 +23,10 @@
             <i class="material-icons">help</i>
             <span>Help</span>
           </RouterLink>
+          <RouterLink class="button is-primary" to="ipc">
+            <i class="material-icons">lauch</i>
+            <span>IPC Test</span>
+          </RouterLink>
         </div>
       </div>
     </section>
@@ -30,13 +34,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
 
 enum TEST {}
 
 export default Vue.extend({
   name: 'Home',
-})
+});
 </script>
 
 <style>

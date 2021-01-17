@@ -1,17 +1,17 @@
-import 'bulma-fluent/bulma.sass'
-import 'material-design-icons/iconfont/material-icons.css'
-import Vue from 'vue'
-import App from './App.vue'
-import './assets/style/animations.scss'
-import './assets/style/main.scss'
-import router from './router/index'
-import store from './store/index'
+import 'bulma-fluent/bulma.sass';
+import 'material-design-icons/iconfont/material-icons.css';
+import Vue from 'vue';
+import App from './App.vue';
+import './assets/style/animations.scss';
+import './assets/style/main.scss';
+import router from './router/index';
+import store from './store/index';
 
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === 'development';
 
-Vue.config.devtools = isDev
-Vue.config.performance = isDev
-Vue.config.productionTip = isDev
+Vue.config.devtools = isDev;
+Vue.config.performance = isDev;
+Vue.config.productionTip = isDev;
 
 // tslint:disable-next-line: no-unused-expression
 new Vue({
@@ -19,18 +19,35 @@ new Vue({
   router,
   store,
   render: (h) => h(App),
-})
+});
+
+import ipc from 'node-ipc';
+
+ipc.config.id = 'vue-template';
+ipc.config.retry = 1500;
+
+ipc.connectTo('coordinator', () => {
+  ipc.of.coordinator.on('connect', () => {
+    ipc.of.coordinator.emit('client.connected', {
+      id: ipc.config.id,
+    });
+  });
+
+  ipc.of.coordinator.on('player.start', () => {
+    ipc.log('Starting video player');
+  });
+});
 
 // to avoild accesing electorn api from web app build
 if (window && window.process && window.process.type === 'renderer') {
-  const { ipcRenderer } = require('electron')
+  const { ipcRenderer } = require('electron');
 
   // handle menu event updates from main script
   ipcRenderer.on('change-view', (event, data) => {
     if (data.route) {
-      router.push(data.route)
+      router.push(data.route);
     }
-  })
+  });
 }
 
 // sample context menu

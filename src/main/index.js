@@ -1,18 +1,18 @@
-import { app, BrowserWindow, Menu } from 'electron'
-import { productName } from '../../package.json'
+import { app, BrowserWindow, Menu } from 'electron';
+import { productName } from '../../package.json';
 
 // set app name
-app.name = productName
+app.name = productName;
 // to hide deprecation message
-app.allowRendererProcessReuse = true
+app.allowRendererProcessReuse = true;
 
 // disable electron warning
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = false
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = false;
 
-const gotTheLock = app.requestSingleInstanceLock()
-const isDev = process.env.NODE_ENV === 'development'
-const isDebug = process.argv.includes('--debug')
-let mainWindow
+const gotTheLock = app.requestSingleInstanceLock();
+const isDev = process.env.NODE_ENV === 'development';
+const isDebug = process.argv.includes('--debug');
+let mainWindow;
 
 // only allow single instance of application
 if (!isDev) {
@@ -20,27 +20,27 @@ if (!isDev) {
     app.on('second-instance', () => {
       // Someone tried to run a second instance, we should focus our window.
       if (mainWindow && mainWindow.isMinimized()) {
-        mainWindow.restore()
+        mainWindow.restore();
       }
-      mainWindow.focus()
-    })
+      mainWindow.focus();
+    });
   } else {
-    app.quit()
-    process.exit(0)
+    app.quit();
+    process.exit(0);
   }
 } else {
   // process.env.ELECTRON_ENABLE_LOGGING = true
 
   require('electron-debug')({
     showDevTools: false,
-  })
+  });
 }
 
 async function installDevTools() {
-  let installExtension = require('electron-devtools-installer')
+  let installExtension = require('electron-devtools-installer');
   installExtension.default(installExtension.VUEJS_DEVTOOLS).catch((err) => {
-    console.log('Unable to install `vue-devtools`: \n', err)
-  })
+    console.log('Unable to install `vue-devtools`: \n', err);
+  });
 }
 
 function createWindow() {
@@ -56,61 +56,59 @@ function createWindow() {
     // useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
-      nodeIntegrationInWorker: false,
+      nodeIntegrationInWorker: true,
       webSecurity: false,
     },
     show: false,
-  })
+  });
 
   // eslint-disable-next-line
-  setMenu()
+  setMenu();
 
   // load root file/url
   if (isDev) {
-    mainWindow.loadURL('http://localhost:9080')
+    mainWindow.loadURL('http://localhost:9080');
   } else {
-    mainWindow.loadFile(`${__dirname}/index.html`)
+    mainWindow.loadFile(`${__dirname}/index.html`);
 
-    global.__static = require('path')
-      .join(__dirname, '/static')
-      .replace(/\\/g, '\\\\')
+    global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
   }
 
   // Show when loaded
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-    mainWindow.focus()
-  })
+    mainWindow.show();
+    mainWindow.focus();
+  });
 
   mainWindow.on('closed', () => {
-    console.log('\nApplication exiting...')
-  })
+    console.log('\nApplication exiting...');
+  });
 }
 
 app.on('ready', () => {
-  createWindow()
+  createWindow();
 
   if (isDev) {
-    installDevTools()
-    mainWindow.webContents.openDevTools()
+    installDevTools();
+    mainWindow.webContents.openDevTools();
   }
 
   if (isDebug) {
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
   }
-})
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
+});
 
 app.on('activate', () => {
   if (mainWindow === null) {
-    createWindow()
+    createWindow();
   }
-})
+});
 
 /**
  * Auto Updater
@@ -133,8 +131,8 @@ app.on('ready', () => {
  */
 
 const sendMenuEvent = async (data) => {
-  mainWindow.webContents.send('change-view', data)
-}
+  mainWindow.webContents.send('change-view', data);
+};
 
 const template = [
   {
@@ -144,7 +142,7 @@ const template = [
         label: 'Home',
         accelerator: 'CommandOrControl+H',
         click() {
-          sendMenuEvent({ route: '/' })
+          sendMenuEvent({ route: '/' });
         },
       },
       { type: 'separator' },
@@ -162,7 +160,7 @@ const template = [
         role: 'help',
         accelerator: 'F1',
         click() {
-          sendMenuEvent({ route: '/help' })
+          sendMenuEvent({ route: '/help' });
         },
       },
       {
@@ -170,12 +168,12 @@ const template = [
         role: 'about',
         accelerator: 'CommandOrControl+A',
         click() {
-          sendMenuEvent({ route: '/about' })
+          sendMenuEvent({ route: '/about' });
         },
       },
     ],
   },
-]
+];
 
 function setMenu() {
   if (process.platform === 'darwin') {
@@ -192,19 +190,19 @@ function setMenu() {
         { type: 'separator' },
         { role: 'quit' },
       ],
-    })
+    });
 
     template.push({
       role: 'window',
-    })
+    });
 
     template.push({
       role: 'help',
-    })
+    });
 
-    template.push({ role: 'services' })
+    template.push({ role: 'services' });
   }
 
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }

@@ -1,13 +1,13 @@
-const path = require('path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const { productName } = require('../package.json')
+const { productName } = require('../package.json');
 
-const isDevMode = process.env.NODE_ENV === 'development'
+const isDevMode = process.env.NODE_ENV === 'development';
 
 const config = {
   name: 'web',
@@ -118,6 +118,9 @@ const config = {
     __dirname: isDevMode,
     __filename: isDevMode,
     fs: 'empty',
+    net: 'empty',
+    dgram: 'empty',
+    tls: 'empty',
   },
   plugins: [
     // new WriteFilePlugin(),
@@ -146,7 +149,7 @@ const config = {
     extensions: ['.ts', '.js', '.vue', '.json', '.css'],
   },
   target: 'web',
-}
+};
 
 /**
  * Adjust web for production settings
@@ -158,7 +161,7 @@ if (isDevMode) {
     new webpack.DefinePlugin({
       __static: `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`,
     })
-  )
+  );
 } else {
   config.plugins.push(
     new CopyWebpackPlugin({
@@ -175,7 +178,7 @@ if (isDevMode) {
     new webpack.LoaderOptionsPlugin({
       minimize: true,
     })
-  )
+  );
 }
 
-module.exports = config
+module.exports = config;
